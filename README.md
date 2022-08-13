@@ -86,6 +86,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
+Journey before Destination.
 Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -97,7 +98,7 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 * [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
 * [![Vue][Vue.js]][Vue-url]
-* [![SpringBoot][spring.io/projects/spring-boot][SpringBoot-url]
+* [![SpringBoot][SpringBoot]][SpringBoot-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -241,4 +242,5 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[JQuery-url]: https://jquery.com
+[SpringBoot-url]: https://spring.io/projects/spring-boot
