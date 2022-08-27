@@ -1,7 +1,10 @@
 package com.y5n.urlshortener.service;
 
+import com.y5n.urlshortener.dto.ShortenUrlRequest;
+
 public interface UrlService {
 
-    public String getOriginalUrl(String shortUrl);
-    public String shortenUrl(String originalUrl);
+    String getUrl(String shortUrl);
+
+    String shortenUrl(ShortenUrlRequest request);
 }
