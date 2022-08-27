@@ -14,5 +14,7 @@ public class ShortenUrlRequest {
     private String originalUrl;
 
     @NotEmpty
-    private Date expirationDate;
+    private String expirationDate;
+
+    private String clientIp;
 }
