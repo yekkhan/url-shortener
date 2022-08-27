@@ -1,13 +1,11 @@
 package com.y5n.urlshortener.controller;
 
 
+import com.y5n.urlshortener.dto.ShortenUrlRequest;
 import com.y5n.urlshortener.service.UrlService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -21,10 +19,16 @@ public class UrlShortenerController {
         this.urlService = urlService;
     }
 
-    @GetMapping("{shortUrl}")
-    public ResponseEntity getAndRedirect(@PathVariable String shortUrl) {
+    @PostMapping("/api/v1/short-url/create")
+    public String shortenUrl(@RequestBody ShortenUrlRequest request) {
 
-        String url = urlService.getOriginalUrl(shortUrl);
+        return urlService.shortenUrl(request);
+    }
+
+    @GetMapping("{link}")
+    public ResponseEntity getAndRedirect(@PathVariable String link) {
+
+        String url = urlService.getUrl(link);
 
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(url))
