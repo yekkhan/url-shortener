@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RestController
@@ -15,14 +16,19 @@ public class UrlShortenerController {
 
     private final UrlService urlService;
 
+    private final String domain = "http://y5n.com/";
+
     public UrlShortenerController(UrlService urlService) {
         this.urlService = urlService;
     }
 
     @PostMapping("/api/v1/short-url/create")
-    public String shortenUrl(@RequestBody ShortenUrlRequest request) {
+    public ResponseEntity shortenUrl(HttpServletRequest request, @RequestBody ShortenUrlRequest shortenUrlRequest) {
 
-        return urlService.shortenUrl(request);
+        shortenUrlRequest.setClientIp(request.getRemoteAddr());
+        String shortUrl = domain + urlService.shortenUrl(shortenUrlRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(shortUrl);
     }
 
     @GetMapping("{link}")
