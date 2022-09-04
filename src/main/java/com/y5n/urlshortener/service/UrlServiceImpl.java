@@ -4,6 +4,7 @@ import com.y5n.urlshortener.dto.ShortenUrlRequest;
 import com.y5n.urlshortener.entity.Url;
 import com.y5n.urlshortener.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -15,10 +16,12 @@ public class UrlServiceImpl implements UrlService{
 
     private final ConversionService conversionService;
     private final UrlRepository urlRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public UrlServiceImpl(ConversionService conversionService, UrlRepository urlRepository) {
+    public UrlServiceImpl(ConversionService conversionService, UrlRepository urlRepository, RedisTemplate<String, String> redisTemplate) {
         this.conversionService = conversionService;
         this.urlRepository = urlRepository;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -26,12 +29,21 @@ public class UrlServiceImpl implements UrlService{
 
         //check redis with shortUrl as key, if not check database, then save in redis
         //if doesn't exist, throw error
-        if (!urlRepository.existsById(link))
-            return null;
 
-        return urlRepository.findById(link).isPresent()
-                ? urlRepository.findById(link).get().getOriginalUrl()
-                : null;
+        String originalUrl = redisTemplate.opsForValue().get(link);
+
+        if(originalUrl == null) {
+            if (urlRepository.existsById(link)) {
+                originalUrl = urlRepository.findById(link).isPresent()
+                        ? urlRepository.findById(link).get().getOriginalUrl()
+                        : null;
+
+                if(originalUrl != null)
+                    redisTemplate.opsForValue().set(link, originalUrl);
+            }
+        }
+
+        return originalUrl;
     }
 
     @Override
