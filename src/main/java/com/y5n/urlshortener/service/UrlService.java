@@ -4,7 +4,7 @@ import com.y5n.urlshortener.dto.ShortenUrlRequest;
 
 public interface UrlService {
 
-    String getUrl(String shortUrl);
+    String getOriginalUrl(String shortUrl);
 
     String shortenUrl(ShortenUrlRequest request);
 }

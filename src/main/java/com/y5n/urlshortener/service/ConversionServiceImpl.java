@@ -23,7 +23,7 @@ public class ConversionServiceImpl implements ConversionService{
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(uniqueString.getBytes());
-            byte[] digest = md.digest();
+            byte[] digest = md.digest(); //digest.length == 16, 128 bits = 16 bytes = 32 hex digit
 
             String hash = DatatypeConverter
                     .printHexBinary(digest).toUpperCase();
