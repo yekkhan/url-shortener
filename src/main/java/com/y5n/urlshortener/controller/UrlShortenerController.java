@@ -16,7 +16,8 @@ public class UrlShortenerController {
 
     private final UrlService urlService;
 
-    private final String domain = "http://y5n.com/";
+//    private final String domain = "http://y5n.com/";
+    private final String domain = "localhost:8080/";
 
     public UrlShortenerController(UrlService urlService) {
         this.urlService = urlService;
@@ -34,10 +35,10 @@ public class UrlShortenerController {
     @GetMapping("{link}")
     public ResponseEntity getAndRedirect(@PathVariable String link) {
 
-        String url = urlService.getUrl(link);
+        String originalUrl = urlService.getOriginalUrl(link);
 
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(url))
+                .location(URI.create(originalUrl))
                 .build();
     }
 }

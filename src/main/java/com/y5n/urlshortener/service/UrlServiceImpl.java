@@ -2,36 +2,45 @@ package com.y5n.urlshortener.service;
 
 import com.y5n.urlshortener.dto.ShortenUrlRequest;
 import com.y5n.urlshortener.entity.Url;
+import com.y5n.urlshortener.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class UrlServiceImpl implements UrlService{
 
     private final ConversionService conversionService;
+    private final UrlRepository urlRepository;
 
-    public UrlServiceImpl(ConversionService conversionService) {
+    public UrlServiceImpl(ConversionService conversionService, UrlRepository urlRepository) {
         this.conversionService = conversionService;
+        this.urlRepository = urlRepository;
     }
 
     @Override
-    public String getUrl(String link) {
+    public String getOriginalUrl(String link) {
 
         //check redis with shortUrl as key, if not check database, then save in redis
         //if doesn't exist, throw error
-        return null;
+        if (!urlRepository.existsById(link))
+            return null;
+
+        return urlRepository.findById(link).isPresent()
+                ? urlRepository.findById(link).get().getOriginalUrl()
+                : null;
     }
 
     @Override
     public String shortenUrl(ShortenUrlRequest request) {
-        Url url = new Url();
         String originalUrl = request.getOriginalUrl();
-        Date expirationDate = new Date(Long.parseLong(request.getExpirationDate()));
+        Date expirationDate = request.getExpirationDate() != null ? new Date(Long.parseLong(request.getExpirationDate())) : null;
         String clientIp = request.getClientIp();
 
+        Url url = new Url();
         url.setOriginalUrl(originalUrl);
         url.setCreatedAt(new Date());
         url.setExpiredAt(expirationDate);
@@ -44,7 +53,7 @@ public class UrlServiceImpl implements UrlService{
         String shortUrl = encodedResult.substring(0, 7);
         url.setShortUrl(shortUrl);
 
-//        urlEntity.save(url);
+        urlRepository.save(url);
 
         return shortUrl;
     }
