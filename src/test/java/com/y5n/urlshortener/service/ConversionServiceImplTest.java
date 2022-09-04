@@ -20,7 +20,6 @@ class ConversionServiceImplTest {
         String expectedResult = "eXilSZ8XYmVTNFF4OjPeuF";
 
         String encodedResult = conversionService.encode("66.228.7.37", new Date(testDate), "y5n.com");
-        System.out.println(encodedResult);
         assertEquals(expectedResult, encodedResult);
     }
 }
