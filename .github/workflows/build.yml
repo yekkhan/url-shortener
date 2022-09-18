@@ -36,9 +36,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set up JDK 1.17
       - uses: actions/setup-java@v1.4.3
         with:
           java-version: ${{ env.JAVA_VERSION }}
-      - name: Maven Clean Package
-        run: |
-          ./mvnw --no-transfer-progress clean package
+      - name: Build with Macen
+        run: mvn package -DskipTests --file pom.xml
+      - name: Test with Maven
+        run: mvn test
+      - name: Upload Artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: url-shortener-1.0-SNAPSHOT.jar
+          path: target/
