@@ -8,7 +8,6 @@ on:
 
 env:
   # Postgres
-  POSTGRESQL_VERSION: 13.1
   MYSQL_DB: url_shortener
   MYSQL_ROOT_PASSWORD: url-shorterner-password
   # Java
@@ -62,13 +61,13 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
 
-      - name: Install doctl (Digital Ocean)
-        uses: digitalocean/action-doctl@v2.1.1
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
-        run: doctl registry login --expiry-seconds 600
+#      - name: Install doctl (Digital Ocean)
+#        uses: digitalocean/action-doctl@v2.1.1
+#        with:
+#          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+#
+#      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+#        run: doctl registry login --expiry-seconds 600
 
 
 
