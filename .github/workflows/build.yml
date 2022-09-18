@@ -44,8 +44,8 @@ jobs:
         run: mvn package -DskipTests --file pom.xml
       - name: Test with Maven
         run: mvn test
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: url-shortener-0.0.1-SNAPSHOT.jar
-          path: target/
+#      - name: Upload Artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: url-shortener-0.0.1-SNAPSHOT.jar
+#          path: target/
