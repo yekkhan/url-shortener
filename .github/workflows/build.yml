@@ -45,7 +45,7 @@ jobs:
       - name: Test with Maven
         run: mvn test
       - name: Upload Artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
-          name: url-shortener-1.0-SNAPSHOT.jar
+          name: url-shortener-0.0.1-SNAPSHOT.jar
           path: target/
