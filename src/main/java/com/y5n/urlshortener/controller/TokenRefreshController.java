@@ -23,14 +23,14 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/token")
 @RequiredArgsConstructor
 @Slf4j
 public class TokenRefreshController {
 
     private final UserService userService;
 
-    @GetMapping("/token/refresh")
+    @GetMapping("/refresh")
     public HttpServletResponse shortenUrl(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
