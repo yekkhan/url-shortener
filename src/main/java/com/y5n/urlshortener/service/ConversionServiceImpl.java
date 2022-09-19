@@ -9,39 +9,54 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @Service
-public class ConversionServiceImpl implements ConversionService{
+public class ConversionServiceImpl implements ConversionService {
 
     private final int base = 62;
-    private final String allowedString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private final String allowedString = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    // raw data
+    // md5 hash IP address + concat
+    // big int
+
+    // presentation
+    // base64 encode
+    // truncate first 7
 
     @Override
-    public String encode(String clientIp, Date createdAt, String originalUrl) {
+    public String encode(String ipAddress, Date createdAt, String originalUrl) {
 
-        //md5 hash ip + date
-        String uniqueString = clientIp + createdAt.toString();
+        //base62 encode hashed result
+        String uniqueString = preprocessData(ipAddress, createdAt, originalUrl);
+        BigInteger hashResult = hash(uniqueString);
+
+        return toBase62(hashResult).substring(0, 7);
+    }
+
+    @Override
+    public String preprocessData(String ipAddress, Date createdAt, String originalUrl) {
+        return ipAddress + createdAt.toInstant() + originalUrl;
+    }
+
+    @Override
+    public BigInteger hash(String data) {
         BigInteger bigIntegerHash;
+
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(uniqueString.getBytes());
+            md.update(data.getBytes());
             byte[] digest = md.digest(); //digest.length == 16, 128 bits = 16 bytes = 32 hex digit
 
             String hash = DatatypeConverter
                     .printHexBinary(digest).toUpperCase();
             bigIntegerHash = new BigInteger(hash, 16);
+
+            return bigIntegerHash;
         } catch (NoSuchAlgorithmException exception) {
             return null;
         }
-
-        //base62 encode hashed result
-        return toBase62(bigIntegerHash);
     }
 
-    @Override
-    public String decode() {
-        return null;
-    }
-
-    private String toBase62(BigInteger input) {
+    public String toBase62(BigInteger input) {
         StringBuilder encodedString = new StringBuilder();
         BigInteger zero = new BigInteger("0");
         BigInteger base = new BigInteger(String.valueOf(this.base));
