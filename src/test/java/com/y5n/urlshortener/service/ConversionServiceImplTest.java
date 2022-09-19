@@ -47,6 +47,8 @@ class ConversionServiceImplTest {
         String data = ipAddress + date.toInstant() + originalUrl;
         BigInteger expected = new BigInteger("d4f2c941887462a8869b6945b3087703", 16);
 
+        System.out.println("hello");
+        System.out.println(data);
         // act
         BigInteger actual = underTest.hash(data);
 
