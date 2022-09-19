@@ -1,10 +1,15 @@
 package com.y5n.urlshortener.service;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 public interface ConversionService {
 
-    String encode(String clientIp, Date createdAt, String originalUrl);
+    String encode(String ipAddress, Date createdAt, String originalUrl);
 
-    String decode();
+    String preprocessData(String ipAddress, Date date, String originalUrl);
+
+    BigInteger hash(String data);
+
+    String toBase62(BigInteger data);
 }

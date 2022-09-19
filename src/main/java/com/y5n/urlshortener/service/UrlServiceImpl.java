@@ -54,12 +54,11 @@ public class UrlServiceImpl implements UrlService{
         url.setCreatedAt(new Date());
         url.setExpiredAt(expirationDate);
 
-        String encodedResult = conversionService.encode(clientIp, url.getCreatedAt(), originalUrl);
+        String shortUrl = conversionService.encode(clientIp, url.getCreatedAt(), originalUrl);
 
-        if(encodedResult == null)
+        if(shortUrl == null)
             return null;
 
-        String shortUrl = encodedResult.substring(0, 7);
         url.setShortUrl(shortUrl);
 
         urlRepository.save(url);
