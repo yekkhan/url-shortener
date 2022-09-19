@@ -42,6 +42,8 @@ public class ConversionServiceImpl implements ConversionService {
 
     @Override
     public BigInteger hash(String data) {
+        System.out.println("hash:");
+        System.out.println(data);
         BigInteger bigIntegerHash;
 
         try {
