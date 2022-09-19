@@ -6,6 +6,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Date;
 
 @Service
@@ -34,7 +35,9 @@ public class ConversionServiceImpl implements ConversionService {
 
     @Override
     public String preprocessData(String ipAddress, Date createdAt, String originalUrl) {
-        return ipAddress + createdAt.toInstant() + originalUrl;
+        // createdAtInstant will be printed in UTC format
+        Instant createdAtInstant = createdAt.toInstant();
+        return ipAddress + createdAtInstant + originalUrl;
     }
 
     @Override
