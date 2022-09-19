@@ -50,8 +50,6 @@ class ConversionServiceImplTest {
 
         BigInteger expected = new BigInteger("00db7490cf74d3548171598cd2ea2e75", 16);
 
-        System.out.println("hello");
-        System.out.println(data);
         // act
         BigInteger actual = underTest.hash(data);
 
