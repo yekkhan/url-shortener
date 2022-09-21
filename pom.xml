@@ -128,9 +128,6 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <properties>
-                <activatedProperties>prod</activatedProperties>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
