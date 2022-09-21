@@ -9,7 +9,6 @@ on:
 env:
   # Postgres
   MYSQL_DB: url_shortener
-  MYSQL_ROOT_PASSWORD: url-shorterner-password
   # Java
   JAVA_VERSION: 1.17
   # DockerHub
@@ -23,7 +22,7 @@ jobs:
         image: mysql
         env:
           MYSQL_DB: ${{ env.MYSQL_DB }}
-          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -65,16 +64,16 @@ jobs:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Write value to Properties-file
-        uses: christian-draeger/write-properties@1.1.0
-        with:
-          path: './src/main/resources/application-prod.properties'
-          property: |
-            'spring.datasource.password'
-            'spring.redis.password'
-          value: |
-            '${{ secrets.MYSQL_PASSWORD }}'
-            '${{ secrets.REDIS_PASSWORD }}'
+#      - name: Write value to Properties-file
+#        uses: christian-draeger/write-properties@1.1.0
+#        with:
+#          path: './src/main/resources/application-prod.properties'
+#          property: |
+#            'spring.datasource.password'
+#            'spring.redis.password'
+#          value: |
+#            '${{ secrets.MYSQL_PASSWORD }}'
+#            '${{ secrets.REDIS_PASSWORD }}'
 
       - name: Maven Clean Package and Push to Dockerhub
         run: |
