@@ -14,7 +14,6 @@ env:
   JAVA_VERSION: 1.17
   # DockerHub
   DOCKER_HUB_USERNAME: yekkhan
-  DOCKER_IMAGE: yekkhan/url-shortener
 
 jobs:
   deploy:
@@ -116,8 +115,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           username: ${{ secrets.SSH_USERNAME }}
           script: |
-            docker pull {{ env.DOCKER_IMAGE }}
-            docker run {{ env.DOCKER_IMAGE }}
+            docker pull yekkhan/url-shortener
+            docker run yekkhan/url-shortener
 
 #      - uses: 8398a7/action-slack@v3
 #        with:
