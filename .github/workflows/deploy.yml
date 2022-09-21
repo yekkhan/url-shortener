@@ -112,7 +112,7 @@ jobs:
       - name: SSH into Server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secret.SSH_HOST }} #IP address of server
+          host: ${{ secrets.SSH_HOST }} #IP address of server
           key: ${{ secrets.SSH_KEY }}
           username: ${{ secrets.SSH_USERNAME }}
           script: |
