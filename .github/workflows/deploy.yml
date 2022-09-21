@@ -70,10 +70,10 @@ jobs:
           path: './src/main/resources/application-prod.properties'
           property: |
             'spring.datasource.password'
-            'spring.redis.password'
+#            'spring.redis.password'
           value: |
             '${{ secrets.MYSQL_PASSWORD }}'
-            '${{ secrets.REDIS_PASSWORD }}'
+#            '${{ secrets.REDIS_PASSWORD }}'
 
       - name: Maven Clean Package and Push to Dockerhub
         run: |
@@ -115,7 +115,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             docker pull yekkhan/url-shortener
-            docker run --network="host" yekkhan/url-shortener
+            docker run --network="host" --name y5n -d yekkhan/url-shortener
 
 #      - uses: 8398a7/action-slack@v3
 #        with:
