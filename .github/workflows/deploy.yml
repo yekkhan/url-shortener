@@ -14,12 +14,7 @@ env:
   JAVA_VERSION: 1.17
   # DockerHub
   DOCKER_HUB_USERNAME: yekkhan
-  # AWS & Elastic Bean Stalk
-  AWS_REGION: eu-west-1
-  EB_ENVIRONMENT_NAME: Springbootreactfullstack-env
-  EB_APPLICATION_NAME: springboot-react-fullstack
-  EB_DEPLOYMENT_PACKAGE: elasticbeanstalk/docker-compose.yml
-  # Digital Ocean
+  DOCKER_IMAGE: yekkhan/url-shortener
 
 jobs:
   deploy:
@@ -61,16 +56,6 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
 
-#      - name: Install doctl (Digital Ocean)
-#        uses: digitalocean/action-doctl@v2.1.1
-#        with:
-#          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-#
-#      - name: Log in to DigitalOcean Container Registry with short-lived credentials
-#        run: doctl registry login --expiry-seconds 600
-
-
-
       - name: Build Number
         id: build-number
         run: echo "::set-output name=BUILD_NUMBER::$(date '+%-d.%-m.%Y.%-H.%-M.%-S')"
@@ -80,6 +65,17 @@ jobs:
         with:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Write value to Properties-file
+        uses: christian-draeger/write-properties@1.1.0
+        with:
+          path: './src/main/resources/application-prod.properties'
+          property: |
+            'spring.datasource.password'
+            'spring.redis.password'
+          value: |
+            '${{ secrets.MYSQL_PASSWORD }}'
+            '${{ secrets.REDIS_PASSWORD }}'
 
       - name: Maven Clean Package and Push to Dockerhub
         run: |
@@ -93,17 +89,36 @@ jobs:
 #          text: ':white_check_mark: pushed amigoscode/springboot-react-fullstack:${{steps.build-number.outputs.BUILD_NUMBER}} to docker hub... https://hub.docker.com/repository/docker/amigoscode/springboot-react-fullstack'
 #        env:
 #          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - name: Update and commit app version in docker-compose.yaml
-        run: |
-          BUILD_NUMBER=${{steps.build-number.outputs.BUILD_NUMBER}}
-          echo -e "Current docker/docker-compose.yaml\n$(cat docker/docker-compose.yaml)"
-          sed -i -E 's_(yekkhan/url-shortener:)([^"]*)_\1'${BUILD_NUMBER}'_' docker/docker-compose.yaml
-          echo -e "Current docker/docker-compose.yaml\n$(cat docker/docker-compose.yaml)"
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add docker/docker-compose.yaml
-          git commit -m "new app version: ${BUILD_NUMBER}"
-          git push
+#      - name: Update and commit app version in docker-compose.yaml
+#        run: |
+#          BUILD_NUMBER=${{steps.build-number.outputs.BUILD_NUMBER}}
+#          echo -e "Current docker/docker-compose.yaml\n$(cat docker/docker-compose.yaml)"
+#          sed -i -E 's_(yekkhan/url-shortener:)([^"]*)_\1'${BUILD_NUMBER}'_' docker/docker-compose.yaml
+#          echo -e "Current docker/docker-compose.yaml\n$(cat docker/docker-compose.yaml)"
+#          git config user.name github-actions
+#          git config user.email github-actions@github.com
+#          git add docker/docker-compose.yaml
+#          git commit -m "new app version: ${BUILD_NUMBER}"
+#          git push
+
+#      - name: Install doctl (Digital Ocean)
+#        uses: digitalocean/action-doctl@v2.1.1
+#        with:
+#          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+#
+#      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+#        run: doctl registry login --expiry-seconds 600
+
+      - name: SSH into Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secret.SSH_HOST }} #IP address of server
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.SSH_USERNAME }}
+          script: |
+            docker pull {{ env.DOCKER_IMAGE }}
+            docker run {{ env.DOCKER_IMAGE }}
+
 #      - uses: 8398a7/action-slack@v3
 #        with:
 #          status: ${{ job.status }}
