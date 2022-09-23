@@ -64,16 +64,16 @@ jobs:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Write value to Properties-file
-        uses: christian-draeger/write-properties@1.1.0
-        with:
-          path: './src/main/resources/application-prod.properties'
-          property: |
-            'spring.datasource.password'
-#            'spring.redis.password'
-          value: |
-            '${{ secrets.MYSQL_PASSWORD }}'
-#            '${{ secrets.REDIS_PASSWORD }}'
+#      - name: Write value to Properties-file
+#        uses: christian-draeger/write-properties@1.1.0
+#        with:
+#          path: './src/main/resources/application-prod.properties'
+#          property: |
+#            'spring.datasource.password'
+##            'spring.redis.password'
+#          value: |
+#            '${{ secrets.MYSQL_PASSWORD }}'
+##            '${{ secrets.REDIS_PASSWORD }}'
 
       - name: Maven Clean Package and Push to Dockerhub
         run: |
@@ -115,7 +115,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             cd docker-compose 
-            docker compose up
+            docker compose up -d
 
 #      - uses: 8398a7/action-slack@v3
 #        with:
