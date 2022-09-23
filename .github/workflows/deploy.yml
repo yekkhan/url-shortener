@@ -114,8 +114,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           username: ${{ secrets.SSH_USERNAME }}
           script: |
-            docker pull yekkhan/url-shortener
-            docker run --network="host" --name y5n yekkhan/url-shortener
+            docker compose up
 
 #      - uses: 8398a7/action-slack@v3
 #        with:
