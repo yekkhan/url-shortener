@@ -1,8 +1,5 @@
 package com.y5n.urlshortener.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
@@ -17,10 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -37,31 +31,45 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256("y5n".getBytes());
-                    JWTVerifier verifier = JWT.require(algorithm).build();
-                    DecodedJWT decodedJWT = verifier.verify(token);
-                    String username = decodedJWT.getSubject();
-                    String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-                    Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                    stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(token);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    filterChain.doFilter(request, response);
                 } catch (Exception exception) {
                     log.error("Error authorizing user: " + exception.getMessage());
+
                     response.setHeader("error", exception.getMessage());
                     response.setStatus(FORBIDDEN.value());
-                    Map<String, String> error = new HashMap<>();
-                    error.put("error_message", exception.getMessage());
                     response.setContentType(APPLICATION_JSON_VALUE);
-                    new ObjectMapper().writeValue(response.getOutputStream(), error);
+
+                    Map<String, String> errorMessageBody = buildErrorMessageBody(exception.getMessage());
+                    new ObjectMapper().writeValue(response.getOutputStream(), errorMessageBody);
                 }
-            } else {
-                filterChain.doFilter(request, response);
             }
-        } else {
-            filterChain.doFilter(request, response);
         }
+
+        filterChain.doFilter(request, response);
+    }
+
+    public UsernamePasswordAuthenticationToken getAuthenticationToken(String token) {
+        JWTUtil jwtUtil = new JWTUtil();
+        DecodedJWT decodedJWT = jwtUtil.getDecodedJWT(token);
+
+        String username = decodedJWT.getSubject();
+        String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
+    }
+
+    private Map<String, String> buildErrorMessageBody(String errorMessage) {
+        Map<String, String> error = new HashMap<>();
+        long date = new Date().getTime();
+
+        error.put("timestamp", Long.toString(date));
+        error.put("status", String.valueOf(FORBIDDEN.value()));
+        error.put("error", FORBIDDEN.getReasonPhrase());
+        error.put("message", errorMessage);
+
+        return error;
     }
 }

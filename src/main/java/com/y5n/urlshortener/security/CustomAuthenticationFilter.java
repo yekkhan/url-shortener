@@ -12,10 +12,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -24,10 +22,8 @@ import java.util.List;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
 
-//    @Value("${spring.security.authorization.jwt.secret}")
-    private final String secret = "y5n";
-
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+        super.setAuthenticationFailureHandler(new CustomAuthenticationFilterFailureHandler());
         this.authenticationManager = authenticationManager;
     }
 
@@ -43,10 +39,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
         log.info("Successfully authenticated user: {}", request.getParameter("username"));
         User user = (User) authResult.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
+        Algorithm algorithm = Algorithm.HMAC256("y5n".getBytes());
         List<String> roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         String[] rolesArr = new String[roles.size()];
         roles.toArray(rolesArr);

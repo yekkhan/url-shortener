@@ -2,6 +2,7 @@ package com.y5n.urlshortener.service;
 
 import com.y5n.urlshortener.dto.ShortenUrlRequest;
 import com.y5n.urlshortener.entity.Url;
+import com.y5n.urlshortener.exception.UrlNotFoundException;
 import com.y5n.urlshortener.repository.UrlRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,8 @@ public class UrlServiceImpl implements UrlService{
 
                 if(originalUrl != null)
                     redisTemplate.opsForValue().set(link, originalUrl);
+            } else {
+                throw new UrlNotFoundException("/" + link + " is invalid");
             }
         }
 

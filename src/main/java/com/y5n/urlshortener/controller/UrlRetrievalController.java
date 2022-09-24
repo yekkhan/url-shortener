@@ -25,10 +25,6 @@ public class UrlRetrievalController {
 
         String originalUrl = urlService.getOriginalUrl(link);
 
-//        return ResponseEntity.status(HttpStatus.FOUND)
-//                .location(URI.create("http://youtube.com"))
-//                .build();
-
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(originalUrl))
                 .build();
