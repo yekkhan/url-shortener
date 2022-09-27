@@ -6,8 +6,6 @@ import javax.xml.bind.DatatypeConverter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.util.Date;
 
 @Service
 public class ConversionServiceImpl implements ConversionService {
@@ -24,20 +22,12 @@ public class ConversionServiceImpl implements ConversionService {
     // truncate first 7
 
     @Override
-    public String encode(String ipAddress, Date createdAt, String originalUrl) {
+    public String encode(String originalUrl) {
 
         //base62 encode hashed result
-        String uniqueString = preprocessData(ipAddress, createdAt, originalUrl);
-        BigInteger hashResult = hash(uniqueString);
+        BigInteger hashResult = hash(originalUrl);
 
         return toBase62(hashResult).substring(0, 7);
-    }
-
-    @Override
-    public String preprocessData(String ipAddress, Date createdAt, String originalUrl) {
-        // createdAtInstant will be printed in UTC format
-        Instant createdAtInstant = createdAt.toInstant();
-        return ipAddress + createdAtInstant + originalUrl;
     }
 
     @Override
