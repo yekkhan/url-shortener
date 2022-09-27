@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/url")
+@RequestMapping("/")
 public class UrlRetrievalController {
 
     private final UrlService urlService;
@@ -20,7 +20,7 @@ public class UrlRetrievalController {
         this.urlService = urlService;
     }
 
-    @GetMapping("/{link}")
+    @GetMapping("{link}")
     public ResponseEntity<?> getAndRedirect(@PathVariable String link) {
 
         String originalUrl = urlService.getOriginalUrl(link);

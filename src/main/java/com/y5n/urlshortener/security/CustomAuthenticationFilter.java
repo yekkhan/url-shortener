@@ -1,7 +1,5 @@
 package com.y5n.urlshortener.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +12,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -42,25 +39,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
         log.info("Successfully authenticated user: {}", request.getParameter("username"));
         User user = (User) authResult.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256("y5n".getBytes());
         List<String> roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         String[] rolesArr = new String[roles.size()];
         roles.toArray(rolesArr);
 
-        String accessToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() * 10 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .withArrayClaim("roles", rolesArr)
-                .sign(algorithm);
-
-        String refreshToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() * 30 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .sign(algorithm);
+        JWTUtil jwtUtil = new JWTUtil();
+        String accessToken = jwtUtil.getAccessToken(user.getUsername(), request.getRequestURL().toString(), rolesArr);
+        String refreshToken = jwtUtil.getRefreshToken(user.getUsername(), request.getRequestURL().toString(), rolesArr);
 
         response.setHeader("access_token", accessToken);
         response.setHeader("refresh_token", refreshToken);
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }
