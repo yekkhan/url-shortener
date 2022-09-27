@@ -3,6 +3,7 @@ package com.y5n.urlshortener.controller;
 
 import com.y5n.urlshortener.dto.ShortenUrlRequest;
 import com.y5n.urlshortener.service.UrlService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1")
 @Validated
+@Slf4j
 public class UrlShortenerController {
 
     private final UrlService urlService;
@@ -24,7 +26,7 @@ public class UrlShortenerController {
 
     @PostMapping("/short-url/create")
     public ResponseEntity<?> shortenUrl(HttpServletRequest request, @Valid @RequestBody ShortenUrlRequest shortenUrlRequest) {
-
+        log.info("Shortening URL");
         shortenUrlRequest.setClientIp(request.getRemoteAddr());
         String shortUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "")
                 + "/" + urlService.shortenUrl(shortenUrlRequest);
