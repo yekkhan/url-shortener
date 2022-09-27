@@ -26,7 +26,8 @@ public class UrlShortenerController {
     public ResponseEntity<?> shortenUrl(HttpServletRequest request, @Valid @RequestBody ShortenUrlRequest shortenUrlRequest) {
 
         shortenUrlRequest.setClientIp(request.getRemoteAddr());
-        String shortUrl = "/url/" + urlService.shortenUrl(shortenUrlRequest);
+        String shortUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "")
+                + "/" + urlService.shortenUrl(shortenUrlRequest);
 
         return ResponseEntity.status(HttpStatus.OK).body(shortUrl);
     }
