@@ -118,7 +118,8 @@ jobs:
           envs: BUILD_NUMBER
           script: |
             cd docker-compose
-            sed -i -E 's_(yekkhan/url-shortener:)([^"]*)_\1'${BUILD_NUMBER}'_' docker-compose.yml
+            echo -e "Current BUILD_NUMBER\n$BUILD_NUMBER"
+            sed -i -E 's_(yekkhan/url-shortener:)([^"]*)_\1'$BUILD_NUMBER'_' docker-compose.yml
             docker compose up -d
 
 #      - uses: 8398a7/action-slack@v3
