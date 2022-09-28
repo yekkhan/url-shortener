@@ -110,7 +110,7 @@ jobs:
       - name: SSH into Server
         uses: appleboy/ssh-action@master
         env:
-          BUILD_NUMBER: steps.build-number.outputs.BUILD_NUMBER
+          BUILD_NUMBER: ${{steps.build-number.outputs.BUILD_NUMBER}}
         with:
           host: ${{ secrets.SSH_HOST }} #IP address of server
           key: ${{ secrets.SSH_KEY }}
